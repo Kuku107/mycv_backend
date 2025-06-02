@@ -33,7 +33,7 @@ public class EmailService {
     @Value("${TEMPLATE_ID}")
     private String templateId;
 
-    @Value("${VERIFY_KEY}")
+    @Value("${JWT_VERIFY_KEY}")
     private String secretKey;
 
     @Value("${BASE_VERIFICATION_LINK}")

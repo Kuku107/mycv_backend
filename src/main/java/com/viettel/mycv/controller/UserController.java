@@ -25,7 +25,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("")
+    @PostMapping("/create")
     public ResponseEntity<Object> create(@RequestBody @Valid UserCreateRequest req) {
         log.info("Creating user: {}", req);
 

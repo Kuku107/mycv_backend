@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,6 +71,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("{projectId}")
+    @PreAuthorize("hasAuthority({'manager', 'sysadmin'})")
     public ResponseEntity<Object> delete(@PathVariable @Min(value = 1, message="project id must greater than or equal to 1") Long projectId) {
         log.info("Get request delete project id = {}", projectId);
 

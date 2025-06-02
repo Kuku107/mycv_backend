@@ -26,7 +26,7 @@ public class EmailController {
 
     private final UserService  userService;
 
-    @Value("${VERIFY_KEY}")
+    @Value("${JWT_VERIFY_KEY}")
     private String secretKey;
 
     @GetMapping("/send-email")
