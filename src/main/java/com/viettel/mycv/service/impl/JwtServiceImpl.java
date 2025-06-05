@@ -1,7 +1,9 @@
 package com.viettel.mycv.service.impl;
 
 import com.viettel.mycv.exception.InvalidDataException;
+import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.service.JwtService;
+import com.viettel.mycv.service.MyUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,6 +37,8 @@ public class JwtServiceImpl implements JwtService {
     @Value("${REFRESH_KEY_EXPIRE_DAY}")
     private long refreshKeyExpireDay;
 
+    private final MyUserDetailsService myUserDetailsService;
+
     @Override
     public String generateAccessToken(String email, List<String> authorities) {
         log.info("Generating access token");
@@ -53,7 +57,6 @@ public class JwtServiceImpl implements JwtService {
         claims.put("role", authorities);
         log.info("Finish Generating refresh token");
         return createRefreshToken(email, claims);
-
     }
 
     @Override
@@ -64,6 +67,7 @@ public class JwtServiceImpl implements JwtService {
                 .parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
+
 
     private String createAccessToken(String email, Map<String, Object> claims) {
         return Jwts.builder()

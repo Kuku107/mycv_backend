@@ -3,6 +3,7 @@ package com.viettel.mycv.controller;
 import com.viettel.mycv.common.ProjectTag;
 import com.viettel.mycv.dto.request.ProjectCreateRequest;
 import com.viettel.mycv.dto.request.ProjectUpdateRequest;
+import com.viettel.mycv.model.ProjectEntity;
 import com.viettel.mycv.service.ProjectService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -31,14 +32,15 @@ public class ProjectController {
     public ResponseEntity<Object> getListProjects(
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "5") int pageSize,
-            @RequestParam List<ProjectTag> tags
+            @RequestParam(required = false) List<ProjectTag> tags,
+            @RequestParam(required = false) Long userId
     ) {
         log.info("Get request take list of projects");
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("status", HttpStatus.OK.value());
         result.put("message", "Get list of projects successful");
-        result.put("data", projectService.findAll(pageNo, pageSize, tags));
+        result.put("data", projectService.findAll(pageNo, pageSize, tags, userId));
 
         log.info("Finish getting list of projects");
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -71,7 +73,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("{projectId}")
-    @PreAuthorize("hasAuthority({'manager', 'sysadmin'})")
+    @PreAuthorize("hasAnyAuthority('manager', 'sysadmin')")
     public ResponseEntity<Object> delete(@PathVariable @Min(value = 1, message="project id must greater than or equal to 1") Long projectId) {
         log.info("Get request delete project id = {}", projectId);
 

@@ -21,3 +21,8 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
+gcs:
+  bucket-name: mycvs_live
+  credentials:
+    location: classpath:gcs/my-gcs-key.json

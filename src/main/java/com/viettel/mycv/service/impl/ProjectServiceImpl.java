@@ -7,6 +7,7 @@ import com.viettel.mycv.dto.response.ProjectDetailResponse;
 import com.viettel.mycv.dto.response.ProjectPageResponse;
 import com.viettel.mycv.exception.ResourceNotFound;
 import com.viettel.mycv.model.ProjectEntity;
+import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.repository.ProjectRepository;
 import com.viettel.mycv.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,10 +33,14 @@ public class ProjectServiceImpl implements ProjectService {
     public Long create(ProjectCreateRequest req) {
         log.info("Creating project: {}", req);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        long userId = user.getId();
+
         ProjectEntity project = new ProjectEntity();
         project.setThumbnailUrl(req.getProjectImageUrl());
         project.setTitle(req.getName());
-        project.setUserId(req.getUserId());
+        project.setUserId(userId);
         project.setTag(req.getTag());
         project.setProjectUrl(req.getProjectDemoUrl());
         project.setGithubUrl(req.getProjectRepoUrl());
@@ -68,14 +75,33 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectPageResponse findAll(int pageNo, int pageSize, List<ProjectTag> tags) {
+    public ProjectPageResponse findAll(int pageNo, int pageSize, List<ProjectTag> tags, Long reqUserId) {
         log.info("Finding projects by pageNo: {}, pageSize: {}", pageNo, pageSize);
+
+        Long userId = reqUserId;
+
+        if (userId == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserEntity user = (UserEntity) authentication.getPrincipal();
+            userId = user.getId();
+        }
+
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<ProjectEntity> pageProjectEntity;
+
+        if (tags == null || tags.isEmpty()) {
+            return ProjectPageResponse.builder()
+                    .pageNo(pageNo)
+                    .pageSize(pageSize)
+                    .totalPages(0)
+                    .projects(new ArrayList<>())
+                    .build();
+        }
+
         if (tags.contains(ProjectTag.SHOW_ALL)) {
-            pageProjectEntity = projectRepository.findAll(pageable);
+            pageProjectEntity = projectRepository.findAllByUserId(userId, pageable);
         } else {
-            pageProjectEntity = projectRepository.findByTagIn(tags, pageable);
+            pageProjectEntity = projectRepository.findByTagInAndUserId(tags, userId, pageable);
         }
 
         log.info("Found {} projects", pageProjectEntity.getTotalElements());
@@ -87,9 +113,11 @@ public class ProjectServiceImpl implements ProjectService {
                 .map(entity -> ProjectDetailResponse.builder()
                                                 .projectImageUrl(entity.getThumbnailUrl())
                                                 .tag(entity.getTag())
+                                                .id(entity.getId())
                                                 .projectName(entity.getTitle())
                                                 .projectDemoUrl(entity.getProjectUrl())
                                                 .projectRepoUrl(entity.getGithubUrl())
+                                                .description(entity.getDescription())
                                                 .build())
                 .toList();
 

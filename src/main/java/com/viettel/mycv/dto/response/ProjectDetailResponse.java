@@ -9,9 +9,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProjectDetailResponse {
+    private long id;
     private String projectImageUrl;
     private ProjectTag tag;
     private String projectName;
     private String projectDemoUrl;
     private String projectRepoUrl;
+    private String description;
 }

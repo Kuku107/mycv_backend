@@ -10,10 +10,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ProjectCreateRequest {
-    @NotNull(message = "userId could not be null")
-    @Min(value = 1, message = "userId have to greater than or equal to 1")
-    private Long userId;
-
     @NotBlank(message = "The project have to have a name")
     private String name;
     private String description;

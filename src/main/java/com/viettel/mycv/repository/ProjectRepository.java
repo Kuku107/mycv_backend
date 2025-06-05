@@ -8,9 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
-    Page<ProjectEntity> findByTagIn(List<ProjectTag> tags, Pageable pageable);
+    Page<ProjectEntity> findByTagInAndUserId(Collection<ProjectTag> tags, Long userId, Pageable pageable);
+    Page<ProjectEntity> findAllByUserId(Long userId, Pageable pageable);
 }

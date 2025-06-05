@@ -88,4 +88,28 @@ public class GlobalExceptionHandler {
         response.setMessage(message);
         return response;
     }
+
+    @ExceptionHandler(UserNotVerifiedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse UserNotVerifiedExceptionHandler(UserNotVerifiedException e, WebRequest request) {
+        ErrorResponse response = new ErrorResponse();
+        response.setTimestamp(LocalDateTime.now());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setPath(request.getDescription(false).replace("uri=", ""));
+        response.setError(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        response.setMessage(e.getMessage());
+        return response;
+    }
+
+    @ExceptionHandler(UnauthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse UnauthenticationExceptionHandler(UnauthenticationException e, WebRequest request) {
+        ErrorResponse response = new ErrorResponse();
+        response.setTimestamp(LocalDateTime.now());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setPath(request.getDescription(false).replace("uri=", ""));
+        response.setError(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        response.setMessage(e.getMessage());
+        return response;
+    }
 }

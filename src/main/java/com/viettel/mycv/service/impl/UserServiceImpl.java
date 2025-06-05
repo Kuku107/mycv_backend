@@ -4,8 +4,12 @@ import com.viettel.mycv.common.UserStatus;
 import com.viettel.mycv.dto.request.UserCreateRequest;
 import com.viettel.mycv.exception.ResourceNotFound;
 import com.viettel.mycv.model.ProfileEntity;
+import com.viettel.mycv.model.RoleEntity;
 import com.viettel.mycv.model.UserEntity;
+import com.viettel.mycv.model.UserHasRole;
 import com.viettel.mycv.repository.ProfileRepository;
+import com.viettel.mycv.repository.RoleRepository;
+import com.viettel.mycv.repository.UserHasRoleRepository;
 import com.viettel.mycv.repository.UserRepository;
 import com.viettel.mycv.service.EmailService;
 import com.viettel.mycv.service.UserService;
@@ -24,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final RoleRepository roleRepository;
+    private final UserHasRoleRepository userHasRoleRepository;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -37,10 +43,20 @@ public class UserServiceImpl implements UserService {
         user.setUserStatus(UserStatus.NONE);
         profile.setName(req.getFullName());
 
-        userRepository.save(user);
+//      Lưu UserEntity và ProfileEntity
+        user = userRepository.save(user);
         log.info("saved user {}", user);
         profile.setUserId(user.getId());
         profileRepository.save(profile);
+
+//      Lưu Role của user - manager
+        UserHasRole userHasRole = new UserHasRole();
+
+        RoleEntity role = roleRepository.findByName("manager");
+        userHasRole.setUser(user);
+        userHasRole.setRole(role);
+        userHasRoleRepository.save(userHasRole);
+
 
         emailService.verificationEmail(req.getEmail(), req.getFullName(), user.getId());
         log.info("saved profile {}", profile);

@@ -2,13 +2,16 @@ package com.viettel.mycv.config;
 
 import com.sendgrid.SendGrid;
 import com.viettel.mycv.service.MyUserDetailsService;
+import io.micrometer.core.ipc.http.HttpSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -28,7 +32,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AppConfig {
 
-    private final String[] BypassAuthenticate = {"/auth/**", "/user/create/**", "/confirm-email"};
+    private final String[] BypassAuthenticate = {
+            "/auth/**",
+            "/user/create/**",
+            "/confirm-email",
+            "/auth/google",
+            "/oauth2/callback"
+    };
 
     private final MyUserDetailsService userDetailsService;
 
@@ -37,10 +47,14 @@ public class AppConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers(BypassAuthenticate).permitAll()
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(BypassAuthenticate).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(request -> request.getParameter("userId") != null).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-        .authenticationProvider(authenticationProvider()).addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
+        .authenticationProvider(authenticationProvider()).addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class)
+        .cors(withDefaults());
         return http.build();
     }
 
@@ -70,9 +84,9 @@ public class AppConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry
-                        .addMapping("**")
+                        .addMapping("/**")
                         .allowedHeaders("*")
-                        .allowedOrigins("http://localhost:8080", "https://www.mycvs.live")
+                        .allowedOrigins("http://127.0.0.1:5500", "https://www.mycvs.live")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true)
                         .maxAge(3600);

@@ -19,6 +19,9 @@ target/
 *.iml
 *.ipr
 .env
+/src/main/resources/gcs/
+*.json
+src/main/resources/gcs/
 
 ### NetBeans ###
 /nbproject/private/
