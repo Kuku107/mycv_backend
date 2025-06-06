@@ -25,4 +25,4 @@ springdoc:
 gcs:
   bucket-name: mycvs_live
   credentials:
-    location: classpath:gcs/my-gcs-key.json
+    location: classpath:gcs/my_gcs_key.json

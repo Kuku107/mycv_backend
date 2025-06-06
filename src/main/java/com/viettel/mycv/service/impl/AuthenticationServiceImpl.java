@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public TokenResponse getToken(SignInRequest request) {
-        log.info("Creating new access token and refresh token");
+        log.info("Creating new access token and refresh for email {} and password {}", request.getEmail(), request.getPassword());
 
         List<String> authorities = new ArrayList<>();
         try {

@@ -18,6 +18,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
@@ -84,6 +85,6 @@ public class GCSService {
                 .append("Subject: ").append(subject).append("\r\n")
                 .append("\r\n").append(message);
 
-        return Base64.getUrlEncoder().encodeToString(builder.toString().getBytes());
+        return Base64.getUrlEncoder().encodeToString(builder.toString().getBytes(StandardCharsets.UTF_8));
     }
 }

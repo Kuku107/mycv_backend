@@ -75,7 +75,7 @@ public class GCSController {
 
             gcsService.SendEmail(accessToken, req);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         log.info("Finished request verifying google code callback");
