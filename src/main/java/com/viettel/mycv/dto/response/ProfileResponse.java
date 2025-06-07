@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ProfileResponse {
+    private Long userId;
     private String jobTitle;
     private String email;
     private String name;

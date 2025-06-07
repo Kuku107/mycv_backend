@@ -45,6 +45,7 @@ public class ProfileController {
         ProfileEntity profileEntity = profileService.findByUserId(userId);
         ProfileResponse response = ProfileResponse.builder()
                 .bio(profileEntity.getBio())
+                .userId(userId)
                 .profileUrl(profileEntity.getProfileImageUrl())
                 .phone(profileEntity.getPhone())
                 .name(profileEntity.getName())

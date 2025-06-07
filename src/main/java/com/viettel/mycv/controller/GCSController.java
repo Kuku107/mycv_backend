@@ -55,7 +55,7 @@ public class GCSController {
 
         String state = UUID.randomUUID().toString();
         oAuthService.saveState(state, req);
-        String url = oAuthService.buildAuthUrl(state, req.getEmail());
+        String url = oAuthService.buildAuthUrl(state, req.getEmailFrom());
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("status", HttpStatus.ACCEPTED.value());

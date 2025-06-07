@@ -60,7 +60,7 @@ public class GCSService {
     }
 
     public void SendEmail(String accessToken, ContactMessageRequest req) throws GeneralSecurityException, IOException {
-        log.info("Sending email from " + req.getEmail());
+        log.info("Sending email from {} to {} ", req.getEmailFrom(), req.getAuthorEmail());
         GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 
         Gmail service = new Gmail.Builder(
@@ -70,18 +70,18 @@ public class GCSService {
                 .setApplicationName("MyCV")
                 .build();
 
-        String rawMessage = buildRawMessage(req.getEmail(), rootEmail, req.getSubject(), req.getMessage());
+        String rawMessage = buildRawMessage(req.getEmailFrom(), req.getAuthorEmail(), req.getSubject(), req.getMessage());
         Message message = new Message().setRaw(rawMessage);
 
         service.users().messages().send("me", message).execute();
-        log.info("Finish sending email from {} ", req.getEmail());
+        log.info("Finish sending email from {} to {} ", req.getEmailFrom(), req.getAuthorEmail());
     }
 
-    private String buildRawMessage(String email, String rootEmail, String subject, String message) {
+    private String buildRawMessage(String email, String authorEmail, String subject, String message) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("From: ").append(email).append("\r\n")
-                .append("To: ").append(rootEmail).append("\r\n")
+                .append("To: ").append(authorEmail).append("\r\n")
                 .append("Subject: ").append(subject).append("\r\n")
                 .append("\r\n").append(message);
 
