@@ -85,7 +85,7 @@ public class AppConfig {
                         .addMapping("/**")
                         .allowedHeaders("*")
                         .allowedOrigins("http://127.0.0.1:5500", "https://www.mycvs.live")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowCredentials(true)
                         .maxAge(3600);
             }

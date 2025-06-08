@@ -13,7 +13,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
 
 springdoc:
@@ -26,3 +26,27 @@ gcs:
   bucket-name: mycvs_live
   credentials:
     location: classpath:gcs/my_gcs_key.json
+
+image.path: ${IMAGE_PATH:DUMMY_IMAGE}
+
+# SEND GRID
+SENDGRID_API_KEY: dummy_sendgrid_api_key
+SENDGRID_EMAIL_NO_REPLY: dummy_sendgrid_email_no_reply
+SENDGRID_EMAIL_ROOT: dummy_sendgrid_email_root
+TEMPLATE_ID: dummy_template_id
+BASE_VERIFICATION_LINK: dummy_base_verification_link
+
+# JWT
+JWT_VERIFY_KEY: dummy_jwt_verify_key
+JWT_ACCESS_KEY: dummy_jwt_access_key
+JWT_REFRESH_KEY: dummy_jwt_refresh_key
+ACCESS_KEY_EXPIRE_MINUTE: 15
+REFRESH_KEY_EXPIRE_DAY: 14
+
+# MySQL
+MYSQL_PROD_URL: jdbc:mysql://localhost:3306/mycv
+MYSQL_USERNAME: root
+MYSQL_PASSWORD: Levanduc1078@
+
+#GOOGLE AUTH
+REDIRECT_URL: http://localhost:8080/oauth2/callback

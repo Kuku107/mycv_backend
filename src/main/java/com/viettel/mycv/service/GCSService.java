@@ -38,7 +38,7 @@ public class GCSService {
     private String bucketName;
 
     public String generateUploadUrl(String fileName, String contentType) {
-        log.info("GENERATING upload url for " + fileName);
+        log.info("GENERATING upload url for {} {} ", fileName, contentType);
 
         BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, fileName)
                 .setContentType(contentType)
