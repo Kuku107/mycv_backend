@@ -2,7 +2,6 @@ package com.viettel.mycv.config;
 
 import com.sendgrid.SendGrid;
 import com.viettel.mycv.service.MyUserDetailsService;
-import io.micrometer.core.ipc.http.HttpSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +30,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AppConfig {
 
-    private final String[] BypassAuthenticate = {
+    private final String[] bypassAuthenticate = {
             "/auth/**",
             "/user/create/**",
             "/confirm-email",
@@ -48,7 +46,7 @@ public class AppConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(BypassAuthenticate).permitAll()
+                        .requestMatchers(bypassAuthenticate).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(request -> request.getParameter("userId") != null).permitAll()
                         .anyRequest().authenticated())

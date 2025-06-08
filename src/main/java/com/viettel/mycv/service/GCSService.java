@@ -59,7 +59,7 @@ public class GCSService {
         log.info("Deleted file " + fileName);
     }
 
-    public void SendEmail(String accessToken, ContactMessageRequest req) throws GeneralSecurityException, IOException {
+    public void sendEmail(String accessToken, ContactMessageRequest req) throws GeneralSecurityException, IOException {
         log.info("Sending email from {} to {} ", req.getEmailFrom(), req.getAuthorEmail());
         GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 

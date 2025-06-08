@@ -1,9 +1,9 @@
 package com.viettel.mycv.controller;
 
+import com.viettel.mycv.config.Translator;
 import com.viettel.mycv.dto.request.ContactMessageRequest;
 import com.viettel.mycv.service.GCSService;
 import com.viettel.mycv.service.OAuthService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,12 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,7 +56,7 @@ public class GCSController {
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("status", HttpStatus.ACCEPTED.value());
-        result.put("message", "Create verify url to google email successfully");
+        result.put("message", Translator.translate("google.auth.url.create.success"));
         result.put("data", Map.of("authUrl", url));
 
         log.info("Finished request verifying google email");
@@ -73,7 +70,7 @@ public class GCSController {
             String accessToken = oAuthService.getAccessTokenFromCode(code);
             ContactMessageRequest req = oAuthService.getContactMessageRequestByState(state);
 
-            gcsService.SendEmail(accessToken, req);
+            gcsService.sendEmail(accessToken, req);
         } catch (Exception e) {
             e.printStackTrace();
         }

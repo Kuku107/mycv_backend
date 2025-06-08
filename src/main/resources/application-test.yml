@@ -4,20 +4,47 @@ spring:
       on-profile: test
   devtools:
     add-properties: true
+  datasource:
+    url: ${MYSQL_PROD_URL:jdbc:mysql://35.240.226.216:3306/mycv?useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${MYSQL_USERNAME:duclv}
+    password: ${MYSQL_PASSWORD:Levanduc1078@}
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
-    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
 
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
   swagger-ui:
-    enabled: true
+    enabled: false
 
-jwt:
-  code: testmode
+gcs:
+  bucket-name: mycvs_live
+  credentials:
+    location: classpath:gcs/my_gcs_key.json
+
+# SEND GRID
+SENDGRID_API_KEY: dummy_sendgrid_api_key
+SENDGRID_EMAIL_NO_REPLY: dummy_sendgrid_email_no_reply
+SENDGRID_EMAIL_ROOT: dummy_sendgrid_email_root
+TEMPLATE_ID: dummy_template_id
+BASE_VERIFICATION_LINK: dummy_base_verification_link
+
+# JWT
+JWT_VERIFY_KEY: dummy_jwt_verify_key
+JWT_ACCESS_KEY: dummy_jwt_access_key
+JWT_REFRESH_KEY: dummy_jwt_refresh_key
+ACCESS_KEY_EXPIRE_MINUTE: 15
+REFRESH_KEY_EXPIRE_DAY: 14
+
+# MySQL
+MYSQL_PROD_URL: jdbc:mysql://localhost:3306/mycv
+MYSQL_USERNAME: root
+MYSQL_PASSWORD: Levanduc1078@
+
+#GOOGLE AUTH
+REDIRECT_URL: http://localhost:8080/oauth2/callback

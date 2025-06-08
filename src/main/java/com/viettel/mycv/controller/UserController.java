@@ -1,6 +1,8 @@
 package com.viettel.mycv.controller;
 
+import com.viettel.mycv.config.Translator;
 import com.viettel.mycv.dto.request.UserCreateRequest;
+import com.viettel.mycv.dto.response.ApiResponse;
 import com.viettel.mycv.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +28,17 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> create(@RequestBody @Valid UserCreateRequest req) {
+    public ApiResponse create(@RequestBody @Valid UserCreateRequest req) {
         log.info("Creating user: {}", req);
 
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("status", HttpStatus.CREATED.value());
-        result.put("message", "Create user successful");
-        result.put("data", userService.save(req));
+        Long result = userService.save(req);
 
-        log.info("Finish creating user");
+        log.info("Created user with id: {}", result);
 
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return ApiResponse.builder()
+                .status(HttpStatus.CREATED.value())
+                .message(Translator.translate("user.create.success"))
+                .data(result)
+                .build();
     }
 }

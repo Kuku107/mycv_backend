@@ -5,6 +5,7 @@ import com.viettel.mycv.exception.ResourceNotFound;
 import com.viettel.mycv.model.ProfileEntity;
 import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.repository.ProfileRepository;
+import com.viettel.mycv.service.AuthenticationService;
 import com.viettel.mycv.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +19,19 @@ import org.springframework.stereotype.Service;
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final AuthenticationService authenticationService;
 
     @Override
     public void update(ProfileUpdateRequest req) {
         log.info("Updating profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        Long userId = user.getId();
 
+        Long userId = authenticationService.getContextUserId();
+        updateProfile(userId, req);
+        log.info("Profile updated");
+    }
+
+
+    public void updateProfile(Long userId, ProfileUpdateRequest req) {
         ProfileEntity profile = findByUserId(userId);
         profile.setJobTitle(req.getJobTitle());
         profile.setName(req.getName());
@@ -36,8 +42,6 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setFacebookUrl(req.getFacebookUrl());
         profile.setInstagramUrl(req.getInstagramUrl());
         profile.setTwitterUrl(req.getTwitterUrl());
-        log.info("Profile updated");
-
         profileRepository.save(profile);
     }
 

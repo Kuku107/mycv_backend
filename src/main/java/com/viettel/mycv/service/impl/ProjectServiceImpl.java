@@ -9,6 +9,7 @@ import com.viettel.mycv.exception.ResourceNotFound;
 import com.viettel.mycv.model.ProjectEntity;
 import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.repository.ProjectRepository;
+import com.viettel.mycv.service.AuthenticationService;
 import com.viettel.mycv.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +30,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
 
+    private final AuthenticationService authenticationService;
+
     @Override
     public Long create(ProjectCreateRequest req) {
         log.info("Creating project: {}", req);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        long userId = user.getId();
+        Long userId = authenticationService.getContextUserId();
 
         ProjectEntity project = new ProjectEntity();
         project.setThumbnailUrl(req.getProjectImageUrl());
@@ -46,9 +47,9 @@ public class ProjectServiceImpl implements ProjectService {
         project.setGithubUrl(req.getProjectRepoUrl());
         project.setDescription(req.getDescription());
 
-        projectRepository.save(project);
+        ProjectEntity result = projectRepository.save(project);
         log.info("Project created: {}", project);
-        return project.getId();
+        return result.getId();
     }
 
     @Override
@@ -81,9 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
         Long userId = reqUserId;
 
         if (userId == null) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserEntity user = (UserEntity) authentication.getPrincipal();
-            userId = user.getId();
+            userId = authenticationService.getContextUserId();
         }
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);

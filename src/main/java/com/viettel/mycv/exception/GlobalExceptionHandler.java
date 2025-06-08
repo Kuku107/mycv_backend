@@ -2,6 +2,7 @@ package com.viettel.mycv.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.viettel.mycv.config.Translator;
 import com.viettel.mycv.dto.response.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse ResourceNotFoundHandler(ResourceNotFound e, WebRequest request) {
+    public ErrorResponse resourceNotFoundHandler(ResourceNotFound e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse ConstraintViolationExceptionHandler(ConstraintViolationException e, WebRequest request) {
+    public ErrorResponse constraintViolationExceptionHandler(ConstraintViolationException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e, WebRequest request) {
+    public ErrorResponse methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -63,19 +64,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InvalidFormatException.class, MismatchedInputException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse HttpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e, WebRequest request) {
+    public ErrorResponse httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setPath(request.getDescription(false).replace("uri=", ""));
         response.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        response.setMessage("Failing to parse the field in request");
+        response.setMessage(Translator.translate("exception.field.parse.fail"));
         return response;
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse DataIntegrityViolationExceptionHandler(DataIntegrityViolationException e, WebRequest request) {
+    public ErrorResponse dataIntegrityViolationExceptionHandler(DataIntegrityViolationException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -91,7 +92,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotVerifiedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse UserNotVerifiedExceptionHandler(UserNotVerifiedException e, WebRequest request) {
+    public ErrorResponse userNotVerifiedExceptionHandler(UserNotVerifiedException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -103,7 +104,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse UnauthenticationExceptionHandler(UnauthenticationException e, WebRequest request) {
+    public ErrorResponse unauthenticationExceptionHandler(UnauthenticationException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse();
         response.setTimestamp(LocalDateTime.now());
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

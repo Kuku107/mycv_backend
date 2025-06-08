@@ -2,6 +2,7 @@ package com.viettel.mycv.service.impl;
 
 import com.viettel.mycv.dto.request.SignInRequest;
 import com.viettel.mycv.dto.response.TokenResponse;
+import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.repository.UserRepository;
 import com.viettel.mycv.service.AuthenticationService;
 import com.viettel.mycv.service.JwtService;
@@ -64,5 +65,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String accessKey = jwtService.generateAccessToken(user.getEmail(), authorities);
 
         return TokenResponse.builder().accessToken(accessKey).refreshToken(refreshToken).build();
+    }
+
+    public Long getContextUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        return user.getId();
     }
 }

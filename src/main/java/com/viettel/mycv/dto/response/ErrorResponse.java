@@ -1,6 +1,5 @@
 package com.viettel.mycv.dto.response;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

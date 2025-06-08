@@ -1,6 +1,8 @@
 package com.viettel.mycv.controller;
 
 import com.viettel.mycv.common.UserStatus;
+import com.viettel.mycv.config.Translator;
+import com.viettel.mycv.dto.response.ApiResponse;
 import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.service.EmailService;
 import com.viettel.mycv.service.UserService;
@@ -30,36 +32,34 @@ public class EmailController {
     private String secretKey;
 
     @GetMapping("/send-email")
-    public ResponseEntity<Object> sendEmail(@RequestParam String to,
+    public ApiResponse sendEmail(@RequestParam String to,
                                             @RequestParam String subject,
                                             @RequestParam String body) {
         log.info("Get request sending email to " + to);
 
         emailService.sendEmail(to, subject, body);
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("status", HttpStatus.OK.value());
-        result.put("message", "Sent email successfully");
-        result.put("data", "");
         log.info("Finished sending email to " + to);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+
+        return ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message(Translator.translate("sendgrid.send.success"))
+                .build();
     }
 
     @GetMapping("/verification-email")
-    public ResponseEntity<Object> verificationEmail(@RequestParam String to, @RequestParam String name, @RequestParam Long userId) {
-        log.info("Get reuqest verification email to " + to);
+    public ApiResponse verificationEmail(@RequestParam String to, @RequestParam String name, @RequestParam Long userId) {
+        log.info("Get reuqest send verification email to " + to);
         emailService.verificationEmail(to, name, userId);
+        log.info("Finished send verification email");
 
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("status", HttpStatus.OK.value());
-        result.put("message", "Verification email successfully");
-        result.put("data", "");
-
-        log.info("Finished verification email");
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message(Translator.translate("sendgrid.email.send.success"))
+                .build();
     }
 
     @GetMapping("/confirm-email")
-    public ResponseEntity<Object> verifyEmail(@RequestParam String token) {
+    public ApiResponse verifyEmail(@RequestParam String token) {
         log.info("Get request confirm email to " + token);
         try {
             Claims claims = Jwts.parser()
@@ -70,18 +70,23 @@ public class EmailController {
             Long userId = Long.valueOf(claims.getSubject());
             userService.updateStatus(userId, UserStatus.ACTIVE);
 
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("status", HttpStatus.ACCEPTED.value());
-            result.put("message", "Verify email successfully");
-            result.put("data", "");
             log.info("Finished confirm email");
 
-            return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+            return ApiResponse.builder()
+                    .status(HttpStatus.ACCEPTED.value())
+                    .message(Translator.translate("sendgrid.email.confirm.sucess"))
+                    .build();
 
         } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token expired");
+            return ApiResponse.builder()
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .message(Translator.translate("sendgrid.email.confirm.jwt.expire"))
+                    .build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token");
+            return ApiResponse.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(e.getMessage())
+                    .build();
         }
     }
 }

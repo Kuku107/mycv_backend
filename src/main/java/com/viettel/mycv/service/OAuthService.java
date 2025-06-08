@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,21 +24,25 @@ public class OAuthService {
     @Value("${REDIRECT_URL}")
     private String redirectUrl;
 
-    private final List<String> SCOPES = List.of("https://www.googleapis.com/auth/gmail.send");
+    private final List<String> scopes = List.of("https://www.googleapis.com/auth/gmail.send");
 
     private final Map<String, ContactMessageRequest> pendingEmails = new ConcurrentHashMap<>();
 
     private GoogleAuthorizationCodeFlow flow;
 
-    public OAuthService() throws Exception {
+    public OAuthService() throws IOException, GeneralSecurityException {
         var jsonFactory = JacksonFactory.getDefaultInstance();
         var httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-
         var inputStream = getClass().getResourceAsStream("/gcs/client_secret_google_mail.json");
+
+        if (inputStream == null) {
+            throw new IOException("input Stream is null");
+        }
+
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(inputStream));
 
         this.flow = new GoogleAuthorizationCodeFlow
-                .Builder(httpTransport, jsonFactory, clientSecrets, this.SCOPES)
+                .Builder(httpTransport, jsonFactory, clientSecrets, this.scopes)
                 .setDataStoreFactory(new MemoryDataStoreFactory())
                 .setAccessType("online")
                 .build();

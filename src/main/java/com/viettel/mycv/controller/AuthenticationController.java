@@ -1,25 +1,22 @@
 package com.viettel.mycv.controller;
 
-import com.viettel.mycv.exception.UnauthenticationException;
 import com.viettel.mycv.common.UserStatus;
+import com.viettel.mycv.config.Translator;
 import com.viettel.mycv.dto.request.SignInRequest;
 import com.viettel.mycv.dto.response.TokenResponse;
+import com.viettel.mycv.exception.UnauthenticationException;
 import com.viettel.mycv.exception.UserNotVerifiedException;
 import com.viettel.mycv.model.UserEntity;
 import com.viettel.mycv.service.AuthenticationService;
 import com.viettel.mycv.service.EmailService;
 import com.viettel.mycv.service.MyUserDetailsService;
-import com.viettel.mycv.service.UserService;
 import com.viettel.mycv.service.impl.CookieService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 
 @RestController
@@ -41,7 +38,7 @@ public class AuthenticationController {
 
         if (user.getUserStatus() == UserStatus.NONE) {
             emailService.verificationEmail(user.getEmail(), user.getUsername(), user.getId());
-            throw new UserNotVerifiedException("User is not verified, please verify your email.");
+            throw new UserNotVerifiedException(Translator.translate("authentication.user.unverify"));
         }
 
         TokenResponse data = authService.getToken(request);
@@ -62,7 +59,7 @@ public class AuthenticationController {
             log.info("Finish request refresh token");
             return data;
         } catch (IllegalArgumentException e) {
-            throw new UnauthenticationException("Please login first");
+            throw new UnauthenticationException(Translator.translate("authentication.user.unlogin"));
         }
 
     }

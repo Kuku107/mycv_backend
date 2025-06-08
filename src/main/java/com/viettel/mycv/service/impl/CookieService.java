@@ -23,12 +23,6 @@ public class CookieService {
     }
 
     public void addAccessTokenToCookie(HttpServletResponse response, String accessToken) {
-//        Cookie accessCookie = new Cookie("access-token", accessToken);
-//        accessCookie.setHttpOnly(true);
-//        accessCookie.setSecure(false);
-//        accessCookie.setPath("/");
-//        accessCookie.setMaxAge(60 * 15);
-//        response.addCookie(accessCookie);
 
         String cookie = "access-token=" + accessToken +
                 "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=900";
@@ -36,12 +30,6 @@ public class CookieService {
     }
 
     public void addRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
-//        Cookie refreshCookie = new Cookie("refresh-token", refreshToken);
-//        refreshCookie.setHttpOnly(true);
-//        refreshCookie.setSecure(true);
-//        refreshCookie.setPath("/");
-//        refreshCookie.setMaxAge(60 * 60 * 24 * 7);
-//        response.addCookie(refreshCookie);
 
         String cookie = "refresh-token=" + refreshToken + "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=604800";
         response.addHeader("Set-Cookie", cookie);
