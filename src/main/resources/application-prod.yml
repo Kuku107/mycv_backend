@@ -23,9 +23,10 @@ springdoc:
     enabled: false
 
 gcs:
-  bucket-name: mycvs_live
+  project-id: clean-composite-461118-r2
+  bucket-name: mycvs-live
   credentials:
-    location: classpath:gcs/my_gcs_key.json
+    location: classpath:gcs/service_account_key.json
 
 image.path: ${IMAGE_PATH:DUMMY_IMAGE}
 
