@@ -9,7 +9,7 @@ spring:
   application:
     name: backend-service
   profiles:
-    active: @spring.profiles.active@
+    active: prod
 
 management:
   endpoints:
