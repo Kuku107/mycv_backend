@@ -46,7 +46,7 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
         }
 
         String token = cookieService.getTokenByName(request, tokenType);
-        log.info("token: {}", token);
+        log.info("token type: {}", tokenType);
 
         if (StringUtils.hasLength(token)) {
             try {

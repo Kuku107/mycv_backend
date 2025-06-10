@@ -1,11 +1,46 @@
+#services:
+#  mycv-backend:
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    image: kuku107/mycv-backend:latest
+#    env_file:
+#      - .env
+#    ports:
+#      - "8080:8080"
+
+# docker-compose.yml
+version: '3.8'
+
 services:
-  mycv-backend:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    image: kuku107/mycv-backend:latest
-    env_file:
-      - .env
+  jenkins:
+    image: jenkins/jenkins:lts
     ports:
-      - "8080:8080"
+      - "7080:8080"
+      - "50000:50000"
+    networks:
+      - devops-network
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+
+  sonarqube:
+    image: sonarqube:community
+    ports:
+      - "9000:9000"
+    networks:
+      - devops-network
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+
+networks:
+  devops-network:
+    driver: bridge
+
+volumes:
+  jenkins_home:
+  sonarqube_data:
 
