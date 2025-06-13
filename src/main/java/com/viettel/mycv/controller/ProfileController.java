@@ -53,6 +53,7 @@ public class ProfileController {
 
 
         log.info("Finish get request to get profile for userid {}", userId);
+        log.info("Hom nay troi dep");
 
         return ApiResponse.builder()
                 .status(HttpStatus.OK.value())
